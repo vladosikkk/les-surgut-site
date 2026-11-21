@@ -321,4 +321,15 @@ fs.writeFileSync(out+'/404.html',fs.readFileSync(out+'/index.html','utf8').repla
 fs.writeFileSync(out+'/robots.txt',noindex?'User-agent: *\nDisallow: /\n':`User-agent: *\nAllow: /\nDisallow: /editor/\nSitemap: ${origin}/sitemap.xml\n`);
 fs.writeFileSync(out+'/sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.filter(x=>!['editor','privacy'].includes(x[0])).map(x=>`<url><loc>${origin}/${x[0]?x[0]+'/':''}</loc></url>`).join('')}</urlset>`);
 fs.writeFileSync(out+'/_headers',`/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n  Content-Security-Policy: default-src 'self'; script-src 'self' https://mc.yandex.ru https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru; font-src 'self'; media-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com https://challenges.cloudflare.com; frame-src https://yandex.ru https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'\n/content.json\n  Cache-Control: no-cache\n`);
+const clientDir=out+'/client';
+fs.rmSync(clientDir,{recursive:true,force:true});
+fs.mkdirSync(clientDir,{recursive:true});
+for(const entry of fs.readdirSync(out,{withFileTypes:true})){
+ if(['client','server'].includes(entry.name))continue;
+ fs.cpSync(path.join(out,entry.name),path.join(clientDir,entry.name),{recursive:true});
+}
+const serverDir=out+'/server';
+fs.mkdirSync(serverDir,{recursive:true});
+fs.writeFileSync(serverDir+'/index.js',`export default { async fetch(request, env) { return env.ASSETS.fetch(request); } };\n`);
+fs.writeFileSync(serverDir+'/wrangler.json',JSON.stringify({name:'les-surgut',main:'index.js',compatibility_date:'2026-11-18',compatibility_flags:['nodejs_compat'],no_bundle:true,assets:{directory:'../client'}},null,2));
 console.log(`Built ${pages.length} pages with original assets and content.`);
