@@ -1,0 +1,28 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
+const html=fs.readFileSync('dist/index.html','utf8');
+const cards=[...html.matchAll(/<article class="editorial-card[\s\S]*?<\/article>/g)].map(match=>match[0]);
+const counts=cards.map(card=>(card.match(/data-media=/g)||[]).length);
+const ids=cards.flatMap(card=>[...card.matchAll(/data-media="([^"]+)/g)].map(match=>match[1]));
+console.log('EDITORIAL_CARDS',cards.length,'COUNTS',counts.join(','));
+console.log('EDITORIAL_IMAGES',ids.length,'UNIQUE',new Set(ids).size,'DUPLICATES',ids.length-new Set(ids).size);
+
+const refs=new Set();
+for(const relative of fs.readdirSync('dist',{recursive:true}).filter(file=>/\.(?:html|css)$/.test(file))){
+ const source=fs.readFileSync(path.join('dist',relative),'utf8');
+ for(const match of source.matchAll(/\/assets\/([^"' )?]+)/g))refs.add(match[1].split('#')[0]);
+}
+const missing=[...refs].filter(file=>!fs.existsSync(path.join('dist','assets',file)));
+console.log('ASSET_REFS',refs.size,'MISSING',missing.length);
+if(missing.length)console.log(missing.join('\n'));
+console.log('REVIEW_SCREENSHOTS',(html.match(/review-card|review-slide|data-review/g)||[]).length);
+const expectedPages=['','about','contacts','events','gallery','houses','houses/les','houses/luna','houses/shalash','houses/tuman','offers','orangery','privacy','services','weddings'];
+const missingPages=expectedPages.filter(page=>!fs.existsSync(path.join('dist',page,'index.html')));
+const assetFiles=fs.readdirSync('dist/assets',{withFileTypes:true}).filter(entry=>entry.isFile()).map(entry=>path.join('dist','assets',entry.name));
+const oversized=assetFiles.filter(file=>fs.statSync(file).size>=25*1024*1024);
+console.log('PAGES',expectedPages.length,'MISSING',missingPages.length,'ASSETS',assetFiles.length,'OVERSIZED',oversized.length);
+if(missingPages.length)console.log(missingPages.join('\n'));
+if(oversized.length)console.log(oversized.join('\n'));
+
+if(cards.length!==10||counts.some(count=>count<5||count>8)||ids.length!==new Set(ids).size||missing.length||missingPages.length||oversized.length)process.exitCode=1;
