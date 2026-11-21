@@ -328,6 +328,10 @@ for(const entry of fs.readdirSync(out,{withFileTypes:true})){
  if(['client','server'].includes(entry.name))continue;
  fs.cpSync(path.join(out,entry.name),path.join(clientDir,entry.name),{recursive:true});
 }
+for(const entry of fs.readdirSync(out,{withFileTypes:true})){
+ if(['client','server'].includes(entry.name))continue;
+ fs.rmSync(path.join(out,entry.name),{recursive:true,force:true});
+}
 const serverDir=out+'/server';
 fs.mkdirSync(serverDir,{recursive:true});
 fs.writeFileSync(serverDir+'/index.js',`export default { async fetch(request, env) { return env.ASSETS.fetch(request); } };\n`);
