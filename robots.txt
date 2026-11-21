@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /editor/
+Sitemap: https://vladosikkk.github.io/les-surgut-site/sitemap.xml

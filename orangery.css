@@ -1,0 +1,123 @@
+/* The forthcoming Orangery: forest photographs and a quiet editorial rhythm. */
+body[data-page="orangery"] { background: #f4f2e9; }
+.orangery-heading { padding-top: 32px; }
+.orangery-breadcrumb { display: flex; align-items: center; gap: 12px; color: #64705e; font-size: 11px; }
+.orangery-breadcrumb a { text-decoration: underline; text-underline-offset: 4px; }
+.orangery-title-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 36px; align-items: end; padding: 46px 0 38px; }
+.orangery-title-row .eyebrow { font-size: 14px; font-weight: 500; line-height: 1.5; letter-spacing: .08em; margin-bottom: 20px; }
+.orangery-title-row h1 { font: 400 clamp(58px, 7.5vw, 108px)/1.14 Prata, Georgia, serif; letter-spacing: -.055em; }
+.orangery-intro { padding: 0 0 5px 25px; }
+.orangery-intro > p { color: #2d4433; font-size: clamp(20px, 2vw, 28px); line-height: 1.35; letter-spacing: -.035em; }
+.orangery-intro > span { display: block; margin-top: 22px; color: #40573d; font-size: 18px; font-weight: 400; line-height: 1.5; letter-spacing: -.02em; }
+.orangery-intro > span strong { font-weight: 600; white-space: nowrap; }
+.orangery-hero { width: min(1600px, calc(100% - 56px)); margin: 0 auto; }
+.orangery-hero > img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+.orangery-hero figcaption { display: flex; justify-content: space-between; gap: 20px; padding-top: 14px; color: #64705e; font-size: 10px; line-height: 1.5; }
+.orangery-quick { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 26px; padding-bottom: 28px; border-bottom: 1px solid #cbd1c2; }
+.orangery-quick > span { color: #64705e; font-size: 12px; }
+.orangery-quick > a { display: inline-flex; gap: 26px; align-items: center; min-height: 44px; font-size: 12px; }
+.orangery-quick > a .icon { width: 18px; height: 18px; transform: rotate(90deg); }
+.orangery-quick .button { min-height: 48px; font-weight: 400; }
+.orangery-story { display: grid; grid-template-columns: 1fr 1fr; column-gap: 9%; padding-top: 100px; }
+.orangery-story h2, .orangery-formats h2, .orangery-atmosphere h2, .orangery-stay h2, .orangery-invite h2 { font: 400 clamp(34px, 3.4vw, 50px)/1.18 Prata, Georgia, serif; letter-spacing: -.045em; }
+.orangery-story .eyebrow, .orangery-formats .eyebrow, .orangery-atmosphere .eyebrow, .orangery-invite .eyebrow { display: block; margin-bottom: 20px; font-size: 9px; }
+.orangery-story-copy { padding-top: 4px; max-width: 470px; }
+.orangery-story-copy p { color: #56634f; font-size: 14px; line-height: 1.85; margin-bottom: 15px; }
+.orangery-daylight { grid-column: 1/-1; margin: 49px 0 0; }
+.orangery-story figure button, .orangery-atmosphere figure button { position: relative; display: block; width: 100%; padding: 0; overflow: hidden; background: #dce0d1; }
+.orangery-story figure button > img, .orangery-atmosphere figure button > img { display: block; width: 100%; transition: transform .7s var(--ease); }
+.orangery-story figure button:hover > img, .orangery-atmosphere figure button:hover > img { transform: scale(1.025); }
+.orangery-daylight img { aspect-ratio: 16/9; object-fit: cover; }
+.orangery-story figure figcaption, .orangery-atmosphere figure figcaption { margin-top: 12px; color: #64705e; font-size: 10px; line-height: 1.6; }
+.orangery-image-open { position: absolute; right: 18px; bottom: 18px; display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; background: #f4f2e9; color: #314b36; font-size: 10px; }
+.orangery-image-open .icon { width: 15px; height: 15px; }
+.orangery-formats { display: grid; grid-template-columns: .9fr 1.1fr; gap: 9%; padding-top: 108px; }
+.orangery-formats-heading { align-self: start; position: sticky; top: 32px; }
+.orangery-formats-heading > p { max-width: 300px; margin-top: 23px; color: #64705e; font-size: 13px; line-height: 1.8; }
+.orangery-format { display: grid; grid-template-columns: 29px 1fr; gap: 19px; padding: 27px 0 28px; border-top: 1px solid #bdc7b2; }
+.orangery-format:first-child { padding-top: 4px; border-top: 0; }
+.orangery-format-number { padding-top: 4px; color: #64705e; font-size: 11px; font-variant-numeric: tabular-nums; }
+.orangery-format h3 { color: #2f4634; font-size: 25px; line-height: 1.25; font-weight: 400; letter-spacing: -.035em; }
+.orangery-format p { margin-top: 12px; color: #64705e; font-size: 13px; line-height: 1.8; }
+.orangery-format .text-link { min-height: 44px; margin-top: 12px; font-size: 11px; font-weight: 400; }
+.orangery-atmosphere { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px 42px; align-items: start; padding-top: 95px; }
+.orangery-atmosphere-heading { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr; column-gap: 12%; align-items: end; margin-bottom: 13px; }
+.orangery-atmosphere-heading > .eyebrow { grid-column: 1/-1; }
+.orangery-atmosphere-heading > p { max-width: 340px; color: #64705e; font-size: 14px; line-height: 1.8; padding-bottom: 6px; }
+.orangery-atmosphere figure { margin: 0; }
+.orangery-evening img { aspect-ratio: 1.3; object-fit: cover; object-position: 52% center; }
+.orangery-atmosphere .orangery-table { margin-top: 80px; }
+.orangery-table img { aspect-ratio: .91; object-fit: cover; object-position: 40% center; }
+.orangery-stay { display: grid; grid-template-columns: 1fr 1fr; column-gap: 9%; row-gap: 19px; margin-top: 100px; padding-top: 36px; padding-bottom: 38px; border-block: 1px solid #c6cebc; }
+.orangery-stay > .eyebrow { grid-column: 1/-1; font-size: 9px; }
+.orangery-stay h2 { font-size: clamp(31px, 3vw, 42px); }
+.orangery-stay > div { align-self: center; max-width: 420px; }
+.orangery-stay p { color: #64705e; font-size: 13px; line-height: 1.8; }
+.orangery-stay .text-link { min-height: 44px; margin-top: 12px; font-size: 12px; font-weight: 400; }
+.orangery-invite { display: grid; grid-template-columns: 1fr 1fr; gap: 9%; margin-top: 90px; margin-bottom: 90px; padding: 54px 55px; background: #e1e7d9; }
+.orangery-invite h2 { font-size: clamp(37px, 4vw, 58px); }
+.orangery-invite-copy > p:first-child { max-width: 390px; color: #41553c; font-size: 14px; line-height: 1.8; }
+.orangery-invite .button { min-height: 52px; margin-top: 25px; font-weight: 400; }
+.orangery-direct { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 9px; font-size: 11px; color: #42583d; }
+.orangery-direct .icon { width: 15px; height: 15px; }
+.orangery-invite-copy .orangery-opening-note { max-width: 410px; margin-top: 21px; color: #5a6b51; font-size: 10px; line-height: 1.7; }
+@media (max-width: 1023px) {
+ .orangery-title-row { grid-template-columns: 1.3fr 1fr; gap: 28px; }
+ .orangery-title-row h1 { font-size: 67px; }
+ .orangery-intro { padding-left: 0; }
+ .orangery-story, .orangery-formats, .orangery-stay { column-gap: 6%; }
+ .orangery-atmosphere { column-gap: 25px; }
+ .orangery-invite { gap: 6%; padding: 40px 33px; }
+}
+@media (max-width: 767px) {
+ .orangery-heading { padding-top: 22px; }
+ .orangery-breadcrumb { gap: 9px; font-size: 10px; }
+ .orangery-title-row { grid-template-columns: 1fr; gap: 21px; padding: 30px 0 27px; }
+ .orangery-title-row .eyebrow { font-size: 12px; margin-bottom: 16px; letter-spacing: .05em; }
+ .orangery-title-row h1 { font-size: clamp(39px, 10.8vw, 76px); letter-spacing: -.055em; }
+ .orangery-intro { padding: 0; }
+ .orangery-intro > p { font-size: 18px; line-height: 1.4; }
+ .orangery-intro > span { max-width: none; margin: 16px 0 0; font-size: 16px; line-height: 1.5; }
+ .orangery-hero { width: 100%; }
+ .orangery-hero figcaption { padding: 12px 24px 0; gap: 7px; flex-direction: column; font-size: 9px; }
+ .orangery-quick { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 15px; padding-top: 22px; padding-bottom: 23px; }
+ .orangery-quick > span { font-size: 10px; }
+ .orangery-quick > a { justify-content: flex-end; gap: 9px; font-size: 11px; }
+ .orangery-quick .button { grid-column: 1/-1; width: 100%; justify-content: space-between; min-height: 49px; }
+ .orangery-story { grid-template-columns: 1fr; padding-top: 49px; }
+ .orangery-story h2, .orangery-formats h2, .orangery-atmosphere h2, .orangery-stay h2 { font-size: clamp(28px, 7.6vw, 43px); line-height: 1.22; }
+ .orangery-story .eyebrow, .orangery-formats .eyebrow, .orangery-atmosphere .eyebrow, .orangery-invite .eyebrow { font-size: 8px; margin-bottom: 16px; }
+ .orangery-story-copy { margin-top: 24px; padding: 0; max-width: none; }
+ .orangery-story-copy p { font-size: 13px; line-height: 1.8; margin-bottom: 14px; }
+ .orangery-daylight { margin-top: 17px; }
+ .orangery-daylight img { aspect-ratio: 1.25; object-fit: cover; }
+ .orangery-story figure figcaption, .orangery-atmosphere figure figcaption { margin-top: 9px; font-size: 9px; }
+ .orangery-image-open { right: 11px; bottom: 11px; padding: 8px 10px; font-size: 9px; }
+ .orangery-formats { grid-template-columns: 1fr; padding-top: 49px; gap: 30px; }
+ .orangery-formats-heading { position: static; }
+ .orangery-formats-heading > p { max-width: 330px; margin-top: 19px; font-size: 12px; }
+ .orangery-format { grid-template-columns: 23px 1fr; gap: 13px; padding: 23px 0; }
+ .orangery-format-number { font-size: 10px; }
+ .orangery-format h3 { font-size: 23px; }
+ .orangery-format p { font-size: 12px; margin-top: 10px; }
+ .orangery-format .text-link { margin-top: 9px; }
+ .orangery-atmosphere { grid-template-columns: 1fr; gap: 26px; padding-top: 28px; }
+ .orangery-atmosphere-heading { display: block; margin: 0; }
+ .orangery-atmosphere-heading > p { max-width: 320px; margin-top: 20px; padding: 0; font-size: 13px; }
+ .orangery-evening img { aspect-ratio: 1.32; object-position: 54% center; }
+ .orangery-atmosphere .orangery-table { margin: 0 0 0 13%; }
+ .orangery-table img { aspect-ratio: 1.1; }
+ .orangery-stay { grid-template-columns: 1fr; margin-top: 49px; padding-block: 27px; gap: 0; }
+ .orangery-stay > .eyebrow { font-size: 8px; margin-bottom: 16px; }
+ .orangery-stay > div { margin-top: 21px; }
+ .orangery-stay p { font-size: 12px; }
+ .orangery-invite { grid-template-columns: 1fr; gap: 25px; margin-block: 43px; padding: 30px 23px; }
+ .orangery-invite h2 { font-size: 36px; }
+ .orangery-invite-copy > p:first-child { font-size: 13px; }
+ .orangery-invite .button { width: 100%; justify-content: space-between; font-size: 11px; margin-top: 21px; }
+ .orangery-direct { flex-wrap: wrap; font-size: 10px; }
+ .orangery-invite-copy .orangery-opening-note { font-size: 10px; margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .orangery-story figure button > img, .orangery-atmosphere figure button > img { transition: none; }
+}
