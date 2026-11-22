@@ -209,6 +209,9 @@ function openBooking(button,calendarDates=false){
  $('.booking-wishes-disclosure').open=mq.matches||!!form.elements.comment.value;
  setBookingStep(0,false);
  openDialog(booking,button.closest('#mobile-menu')?menuButton:button);
+ track('booking_opened',{reason:bookingReason,house:form.elements.house.value||'not_selected'});
+ if(/видеообзор/i.test(bookingReason))track('video_requested',{house:form.elements.house.value||'not_selected'});
+ if(/свад/i.test(bookingReason))track('wedding_requested',{house:form.elements.house.value||'les'});
  initBookingProtection();
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-book]');if(b)openBooking(b)});
@@ -261,6 +264,8 @@ $('#edit-message')?.addEventListener('click',()=>{form.hidden=false;$('#message-
 document.addEventListener('click',e=>{
  const channelLink=e.target.closest('#open-messenger, a[data-channel], #mobile-menu .messenger-links a');
  if(channelLink)track('messenger_opened',{channel:channelLink.dataset.channel||new URL(channelLink.href).hostname});
+ const phoneLink=e.target.closest('a[href^="tel:"]');
+ if(phoneLink)track('phone_clicked',{page:document.body.dataset.page||'unknown'});
 });
 function galleryFromPage(opener){return $$('[data-media]',opener.closest('[data-gallery-group]')||document).filter(b=>!b.hidden&&!b.closest('[hidden]')).map(b=>({name:b.dataset.media,caption:b.dataset.caption||''}))}
 function showMedia(index){
