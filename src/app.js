@@ -40,9 +40,11 @@ $('[data-menu-close]')?.addEventListener('click',()=>setMenu(false));
 menu?.addEventListener('close',reflectMenu);
 menu?.addEventListener('click',event=>{if(event.target.closest('a,[data-book]'))setMenu(false)});
 document.addEventListener('keydown',event=>{
- if($('#media-dialog')?.open&&gallery.length){
-  if(event.key==='ArrowRight')showMedia(galleryIndex+1);
-  if(event.key==='ArrowLeft')showMedia(galleryIndex-1);
+ const mediaDialog=$('#media-dialog');
+ if(mediaDialog?.open){
+  if(event.key==='Escape'){event.preventDefault();closeDialog(mediaDialog);return}
+  if(gallery.length&&event.key==='ArrowRight')showMedia(galleryIndex+1);
+  if(gallery.length&&event.key==='ArrowLeft')showMedia(galleryIndex-1);
  }
 });
 const mq=matchMedia('(min-width:768px)');
@@ -301,13 +303,14 @@ $$('[data-photo-carousel]').forEach(rail=>{
 const galleryFilters=$$('[data-gallery-filter]');
 galleryFilters.forEach(button=>button.addEventListener('click',()=>{
  const category=button.dataset.galleryFilter;
+ const categories=category.split(',');
  galleryFilters.forEach(filter=>{
   filter.classList.toggle('active',filter===button);
   filter.setAttribute('aria-pressed',String(filter===button));
  });
  let count=0;
  $$('.masonry [data-category]').forEach(item=>{
-  item.hidden=category!=='all'&&item.dataset.category!==category;
+  item.hidden=category!=='all'&&!categories.includes(item.dataset.category);
   if(!item.hidden)count++;
  });
  $('.gallery-count').textContent=`Фото: ${count}`;
