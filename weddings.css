@@ -105,3 +105,28 @@ body[data-page="weddings"] .mobile-bottom button{background:#173b2e}
 }
 
 @media(prefers-reduced-motion:reduce){.wedding-photo img{transition:none}}
+
+/* Large editorial wedding archive, grouped as real stories. */
+.wedding-story{border-top:1px solid rgba(23,59,46,.18)}
+.wedding-story-heading{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.7fr);gap:clamp(30px,6vw,90px);align-items:end;margin-bottom:38px}
+.wedding-story-heading h2{max-width:780px;margin:10px 0 0;font-size:clamp(36px,4.4vw,64px);line-height:1.02;letter-spacing:-.04em}
+.wedding-story-heading>p{max-width:560px;margin:0;color:#596b61;line-height:1.75}
+.wedding-story-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:dense;gap:12px}
+.wedding-story-grid .wedding-photo{height:clamp(250px,24vw,390px);border-radius:18px;background:#18372d}
+.wedding-story-grid .wedding-photo:nth-child(9n+1),.wedding-story-grid .wedding-photo:nth-child(9n+6){grid-column:span 2;height:clamp(340px,32vw,520px)}
+.wedding-story-grid .wedding-photo.is-portrait img,.wedding-story-collages .wedding-photo img{object-fit:contain;background:#18372d}
+.wedding-story-priority{background:linear-gradient(180deg,rgba(222,213,196,.3),transparent)}
+.wedding-story-collages .wedding-story-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.wedding-story-collages .wedding-photo,.wedding-story-collages .wedding-photo:nth-child(9n+1),.wedding-story-collages .wedding-photo:nth-child(9n+6){grid-column:auto;height:clamp(360px,38vw,590px)}
+
+@media(max-width:1023px){
+ .wedding-story-grid,.wedding-story-collages .wedding-story-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+@media(max-width:767px){
+ .wedding-story-heading{grid-template-columns:1fr;gap:18px;margin-bottom:26px}
+ .wedding-story-heading h2{font-size:clamp(35px,10vw,48px)}
+ .wedding-story-grid,.wedding-story-collages .wedding-story-grid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 12px 0;margin-right:-20px}
+ .wedding-story-grid .wedding-photo,.wedding-story-grid .wedding-photo:nth-child(9n+1),.wedding-story-grid .wedding-photo:nth-child(9n+6),.wedding-story-collages .wedding-photo,.wedding-story-collages .wedding-photo:nth-child(9n+1),.wedding-story-collages .wedding-photo:nth-child(9n+6){flex:0 0 82vw;grid-column:auto;height:clamp(430px,122vw,560px);scroll-snap-align:start;border-radius:16px}
+ .wedding-story-grid .wedding-photo.is-landscape{height:clamp(310px,78vw,420px)}
+}

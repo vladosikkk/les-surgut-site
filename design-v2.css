@@ -629,6 +629,22 @@ body[data-page="privacy"] .page-intro h1{overflow-wrap:anywhere;hyphens:auto}
   .mobile-menu-contact { padding-top: 20px; }
   .mobile-menu-messengers { margin-top: 13px; }
 }
+
+/* Photo-rich event and nature stories added from the customer archive. */
+.event-photo-story,.about-nature{border-top:1px solid #c6cebc}
+.event-photo-grid,.about-nature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.event-photo-grid .gallery-item,.about-nature-grid .gallery-item{height:clamp(250px,24vw,390px);border-radius:18px;overflow:hidden}
+.event-photo-grid .gallery-item:nth-child(7n+1),.about-nature-grid .gallery-item:nth-child(5n+1){grid-column:span 2}
+.event-photo-link{display:flex;justify-content:flex-end;margin-top:28px}
+.masonry .gallery-item.archive-portrait img{object-fit:contain;background:#18372d}
+@media(max-width:1023px){
+ .event-photo-grid,.about-nature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:767px){
+ .event-photo-grid,.about-nature-grid{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 20px 12px 0;margin-right:-20px}
+ .event-photo-grid .gallery-item,.about-nature-grid .gallery-item,.event-photo-grid .gallery-item:nth-child(7n+1),.about-nature-grid .gallery-item:nth-child(5n+1){flex:0 0 82vw;height:clamp(300px,82vw,420px);scroll-snap-align:start}
+ .event-photo-link{justify-content:flex-start}
+}
 .mobile-menu-links > a { grid-template-columns: minmax(0,1fr) 22px; }
 @media (max-width: 767px) {
   .booking-steps { position: absolute; top: max(30px, calc(env(safe-area-inset-top) + 14px)); left: 50%; width: auto; margin: 0; transform: translateX(-50%); }
