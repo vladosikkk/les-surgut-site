@@ -7,7 +7,7 @@ const [url,selector,output,width='1440',height='1000']=process.argv.slice(2);
 if(!url||!selector||!output)throw new Error('Использование: node capture-browser-screenshot.mjs URL SELECTOR OUTPUT [WIDTH] [HEIGHT]');
 const chrome=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/Applications/Chromium.app/Contents/MacOS/Chromium'].find(fs.existsSync);
 if(!chrome)throw new Error('Chrome или Chromium не найден');
-const port=9800+Math.floor(Math.random()*150),profile=fs.mkdtempSync(path.join(os.tmpdir(),'les-capture-'));
+const port=10000+Math.floor(Math.random()*40000),profile=fs.mkdtempSync(path.join(os.tmpdir(),'les-capture-'));
 const child=spawn(chrome,[`--remote-debugging-port=${port}`,'--remote-debugging-address=127.0.0.1',`--user-data-dir=${profile}`,'--headless=new','--disable-gpu','--hide-scrollbars','--no-first-run','about:blank'],{stdio:'ignore'});
 const pause=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
 async function json(endpoint,options){for(let attempt=0;attempt<100;attempt++){try{const response=await fetch(endpoint,options);if(response.ok)return response.json()}catch{}await pause(100)}throw new Error('Chrome DevTools недоступен')}

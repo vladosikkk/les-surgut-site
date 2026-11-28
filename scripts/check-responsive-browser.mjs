@@ -6,7 +6,7 @@ import path from 'node:path';
 const chromeCandidates=['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome','/Applications/Chromium.app/Contents/MacOS/Chromium'];
 const chrome=chromeCandidates.find(fs.existsSync);
 if(!chrome)throw new Error('Chrome или Chromium не найден');
-const port=9400+Math.floor(Math.random()*400),profile=fs.mkdtempSync(path.join(os.tmpdir(),'les-responsive-'));
+const port=10000+Math.floor(Math.random()*40000),profile=fs.mkdtempSync(path.join(os.tmpdir(),'les-responsive-'));
 const child=spawn(chrome,[`--remote-debugging-port=${port}`,'--remote-debugging-address=127.0.0.1',`--user-data-dir=${profile}`,'--headless=new','--disable-gpu','--no-first-run','about:blank'],{stdio:'ignore'});
 const pause=milliseconds=>new Promise(resolve=>setTimeout(resolve,milliseconds));
 async function json(url,options){for(let attempt=0;attempt<100;attempt++){try{const response=await fetch(url,options);if(response.ok)return response.json()}catch{}await pause(100)}throw new Error(`Chrome DevTools недоступен: ${url}`)}
