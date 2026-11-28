@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {mutateHotDates} from './scripts/update-hot-dates.mjs';
+
+const base={hotDates:[]};
+const offer={id:'tuman-2026-12-04',house:'tuman',date:'2026-12-04',guests:4,terms:'Будний день',regularPrice:20000,salePrice:15000,publishFrom:'2026-11-28',expiresAt:'2026-12-04',active:true,booked:false,comment:''};
+let content=mutateHotDates(base,'add',offer);
+assert.equal(content.hotDates.length,1);
+assert.equal(content.hotDates[0].discount,25);
+assert.throws(()=>mutateHotDates(content,'add',offer),/уже существует/i);
+content=mutateHotDates(content,'edit',{id:offer.id,salePrice:16000});
+assert.equal(content.hotDates[0].discount,20);
+content=mutateHotDates(content,'disable',{id:offer.id});
+assert.equal(content.hotDates[0].active,false);
+content=mutateHotDates(content,'edit',{id:offer.id,active:true});
+content=mutateHotDates(content,'book',{id:offer.id});
+assert.equal(content.hotDates[0].booked,true);
+assert.throws(()=>mutateHotDates(content,'edit',{id:offer.id,salePrice:21000}),/акционная цена/i);
+content=mutateHotDates(content,'delete',{id:offer.id});
+assert.deepEqual(content.hotDates,[]);
+assert.throws(()=>mutateHotDates(content,'delete',{id:'missing'}),/не найдено/i);
+assert.deepEqual(base.hotDates,[], 'Операции не должны мутировать исходный объект');
+console.log('HOT_DATES_ADMIN PASS');
