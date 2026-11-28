@@ -26,4 +26,5 @@ console.log('PAGES',expectedPages.length,'MISSING',missingPages.length,'ASSETS',
 if(missingPages.length)console.log(missingPages.join('\n'));
 if(oversized.length)console.log(oversized.join('\n'));
 
-if(cards.length!==10||counts.some(count=>count<5||count>8)||ids.length!==new Set(ids).size||missing.length||missingPages.length||oversized.length)process.exitCode=1;
+const expectedCounts=[6,6,6,22,6,6,8,8,17,8];
+if(cards.length!==10||counts.some((count,index)=>count!==expectedCounts[index])||ids.length!==new Set(ids).size||missing.length||missingPages.length||oversized.length)process.exitCode=1;
