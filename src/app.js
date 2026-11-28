@@ -1,7 +1,8 @@
 (()=>{
 'use strict';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-let site=null;let selected={arrival:'',departure:'',house:''};let lastOpener=null;let gallery=[];let galleryIndex=0;
+let site=null;let selected={arrival:'',departure:'',house:''};let lastOpener=null;let gallery=[];let galleryIndex=0;let hotDatesApi=null;let currentHotDates=[];
+const hotDatesReady=import('/hot-dates.js').then(api=>{hotDatesApi=api;if(site)renderHotDates()}).catch(()=>null);
 const localDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const today=()=>localDate(new Date());
 const parseDate=s=>new Date(`${s}T12:00:00`);
@@ -13,6 +14,27 @@ const notify=text=>{const t=$('.toast');if(!t)return;t.textContent=text;t.hidden
 const readLocal=key=>{try{return localStorage.getItem(key)}catch{return null}};
 const writeLocal=(key,value)=>{try{localStorage.setItem(key,value);return true}catch{return false}};
 const lock=()=>document.body.classList.toggle('modal-open',!!$('dialog[open]'));
+const addDay=key=>{const value=parseDate(key);value.setDate(value.getDate()+1);return localDate(value)};
+function hotDateCard(offer){
+ const house=site?.houses?.find(item=>item.slug===offer.house);if(!house)return null;
+ const article=document.createElement('article');article.className='hot-date-card';
+ const image=document.createElement('img');image.src=`/assets/${house.cover}-small.webp`;image.srcset=`/assets/${house.cover}-small.webp 720w, /assets/${house.cover}.webp 2400w`;image.sizes='(max-width: 767px) 92vw, 30vw';image.alt=`Дом «${house.name}»`;image.loading='lazy';image.decoding='async';
+ const body=document.createElement('div');body.className='hot-date-card-body';
+ const top=document.createElement('div');top.className='hot-date-card-top';
+ const title=document.createElement('h3');title.textContent=`Дом «${house.name}»`;
+ const badge=document.createElement('span');badge.className='hot-date-discount';badge.textContent=`−${offer.discount}%`;top.append(title,badge);
+ const when=document.createElement('p');when.className='hot-date-when';when.textContent=new Intl.DateTimeFormat('ru-RU',{timeZone:'Asia/Yekaterinburg',weekday:'long',day:'numeric',month:'long'}).format(parseDate(offer.date));
+ const details=document.createElement('p');details.className='hot-date-details';details.textContent=`До ${offer.guests} ${offer.guests===1?'гостя':'гостей'} · ${offer.terms}`;
+ const prices=document.createElement('p');prices.className='hot-date-prices';const old=document.createElement('s');old.textContent=`${money(offer.regularPrice)} ₽`;const price=document.createElement('strong');price.textContent=`${money(offer.salePrice)} ₽`;prices.append(old,price);
+ const note=document.createElement('p');note.className='hot-date-note';note.textContent='Свободную дату и условия подтвердит менеджер.';
+ const button=document.createElement('button');button.className='button primary';button.type='button';button.textContent='Уточнить доступность';button.dataset.book='';button.dataset.house=offer.house;button.dataset.reason='Горячая дата';button.dataset.hotDate=offer.date;button.dataset.hotPrice=String(offer.salePrice);button.dataset.hotGuests=String(offer.guests);
+ body.append(top,when,details,prices,note,button);article.append(image,body);return article;
+}
+function renderHotDates(){
+ currentHotDates=hotDatesApi?.activeHotDates(site?.hotDates||[])||[];
+ $$('[data-hot-date-list]').forEach(list=>{const scope=list.dataset.hotDateList;const offers=currentHotDates.filter(item=>scope==='all'||item.house===scope);list.replaceChildren(...offers.map(hotDateCard).filter(Boolean));const section=list.closest('[data-house-hot-dates]');if(section)section.hidden=!offers.length;});
+ const empty=$('[data-hot-date-empty]');if(empty)empty.hidden=currentHotDates.length>0;
+}
 function openDialog(dialog,opener){lastOpener=opener||document.activeElement;if(!dialog.open)dialog.showModal();lock()}
 function closeDialog(dialog){dialog.close();lock();if(lastOpener?.isConnected)lastOpener.focus()}
 $$('[data-close]').forEach(b=>b.addEventListener('click',()=>closeDialog(b.closest('dialog'))));
@@ -62,6 +84,7 @@ function updateData(data){
  const intro=$('.hero-text>p');if(intro&&data.brand?.intro)intro.textContent=data.brand.intro;
  const introExtra=$('.hero-extra');if(introExtra&&typeof data.brand?.introExtra==='string')introExtra.textContent=data.brand.introExtra;
  const wt=$('.weekday-content h2'),wp=$('.weekday-content>p');if(wt&&data.weekday?.title)wt.textContent=data.weekday.title;if(wp&&data.weekday?.text)wp.textContent=data.weekday.text;
+ renderHotDates();
  const c=data.contacts||{};
  $$('a[href^="tel:"]').forEach(a=>{if(/^\+?\d{10,15}$/.test(c.phoneRaw||'')){a.href=`tel:${c.phoneRaw}`;if(a.matches('.header-phone'))$('span',a).textContent=c.phone;else if(!a.matches('.hero-call,.mobile-bottom a'))a.textContent=c.phone}});
  const links={max:safeURL(c.max,['max.ru']),telegram:safeURL(c.telegram,['t.me']),whatsapp:/^\d{10,15}$/.test(c.whatsapp||'')?`https://wa.me/${c.whatsapp}`:null};
@@ -203,10 +226,12 @@ function openBooking(button,calendarDates=false){
  bookingReason=button.dataset.reason||'Отдых';
  datesFromCalendar=calendarDates;
  bookingType.value=form.elements.house.value==='orangery'||/мероприят|празд|свад|корпоратив|беседк|день рождения|дни рождения|вечеринк|выпускн/i.test(bookingReason)?'event':'stay';
- form.elements.comment.value=bookingReason==='Отдых'?'':bookingReason==='Обратный звонок'?'Пожалуйста, перезвоните мне.':/видеообзор/i.test(bookingReason)?'Пришлите, пожалуйста, видеообзор.':bookingReason;
+ const hotDate=button.dataset.hotDate,hotPrice=Number(button.dataset.hotPrice||0),hotGuests=Number(button.dataset.hotGuests||0);
+ form.elements.comment.value=hotDate?`Горячая дата: ${formatDate(hotDate)}, акционная стоимость ${money(hotPrice)} ₽. Прошу подтвердить доступность и условия.`:bookingReason==='Отдых'?'':bookingReason==='Обратный звонок'?'Пожалуйста, перезвоните мне.':/видеообзор/i.test(bookingReason)?'Пришлите, пожалуйста, видеообзор.':bookingReason;
  form.elements.startedAt.value=String(Date.now());form.elements.company.value='';
- arrival.value=calendarDates?selected.arrival:'';
- departure.value=calendarDates?selected.departure:'';
+ arrival.value=hotDate?hotDate:calendarDates?selected.arrival:'';
+ departure.value=hotDate?addDay(hotDate):calendarDates?selected.departure:'';
+ if(hotGuests)guests.value=String(hotGuests);
  refreshBookingDates();
  $('.booking-wishes-disclosure').open=mq.matches||!!form.elements.comment.value;
  setBookingStep(0,false);
@@ -333,10 +358,10 @@ function initCalendars(){
    for(let j=0;j<offset;j++){const span=document.createElement('span');span.setAttribute('aria-hidden','true');days.append(span)}
    const count=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
    for(let day=1;day<=count;day++){
-    const d=new Date(month.getFullYear(),month.getMonth(),day),key=localDate(d),button=document.createElement('button');button.type='button';button.className='calendar-day';button.textContent=day;button.dataset.date=key;const busy=h?.busy?.includes(key),free=h?.free?.includes(key);button.disabled=key<today()||!!busy;button.classList.toggle('is-busy',!!busy);button.classList.toggle('is-free',!!free&&!busy);button.classList.toggle('is-selected',key===selected.arrival||key===selected.departure);button.classList.toggle('in-range',!!selected.arrival&&!!selected.departure&&key>selected.arrival&&key<selected.departure);button.setAttribute('aria-label',`${formatDate(key)}: ${busy?'занято':free?'свободно':'уточнить занятость'}`);button.setAttribute('aria-pressed',String(key===selected.arrival||key===selected.departure));
+    const d=new Date(month.getFullYear(),month.getMonth(),day),key=localDate(d),button=document.createElement('button');button.type='button';button.className='calendar-day';button.textContent=day;button.dataset.date=key;const busy=h?.busy?.includes(key),free=h?.free?.includes(key),hot=currentHotDates.find(item=>item.house===h?.slug&&item.date===key);button.disabled=key<today()||!!busy;button.classList.toggle('is-busy',!!busy);button.classList.toggle('is-free',!!free&&!busy);button.classList.toggle('is-hot',!!hot&&!busy);button.classList.toggle('is-selected',key===selected.arrival||key===selected.departure);button.classList.toggle('in-range',!!selected.arrival&&!!selected.departure&&key>selected.arrival&&key<selected.departure);if(hot&&!busy){const mark=document.createElement('small');mark.textContent=`−${hot.discount}%`;button.append(mark)}button.setAttribute('aria-label',`${formatDate(key)}: ${busy?'занято':hot?`горячая дата, скидка ${hot.discount}%, доступность уточняется`:free?'свободно':'уточнить занятость'}`);button.setAttribute('aria-pressed',String(key===selected.arrival||key===selected.departure));
     button.addEventListener('click',()=>{if(!selected.arrival||selected.departure||key<=selected.arrival){selected={arrival:key,departure:'',house:h?.slug||''}}else{if(busyInside(h,selected.arrival,key)){notify('В выбранном периоде есть занятые даты. Выберите другой заезд.');return}selected.departure=key;}draw();});days.append(button);
    }
-   selectedText.textContent=selected.arrival?selected.departure?`${formatDate(selected.arrival)} - ${formatDate(selected.departure)}`:`Заезд: ${formatDate(selected.arrival)}. Теперь выберите выезд.`:'Выберите дату заезда';request.disabled=!selected.arrival||!selected.departure;
+   const selectedHot=currentHotDates.find(item=>item.house===h?.slug&&item.date===selected.arrival);selectedText.textContent=selected.arrival?selected.departure?`${formatDate(selected.arrival)} - ${formatDate(selected.departure)}${selectedHot?` · горячая дата −${selectedHot.discount}%`:''}`:`Заезд: ${formatDate(selected.arrival)}. Теперь выберите выезд.`:'Выберите дату заезда';request.disabled=!selected.arrival||!selected.departure;if(selectedHot){request.dataset.hotDate=selectedHot.date;request.dataset.hotPrice=String(selectedHot.salePrice);request.dataset.hotGuests=String(selectedHot.guests);request.dataset.reason='Горячая дата'}else{delete request.dataset.hotDate;delete request.dataset.hotPrice;delete request.dataset.hotGuests;request.dataset.reason='Выбранные даты'};
   }
   $$('[data-month]',container).forEach(b=>b.addEventListener('click',()=>{month.setMonth(month.getMonth()+Number(b.dataset.month));draw()}));
   $('[data-reset-dates]',section)?.addEventListener('click',()=>{selected={arrival:'',departure:'',house:h?.slug||''};draw()});request.addEventListener('click',()=>openBooking(request,true));draw();
