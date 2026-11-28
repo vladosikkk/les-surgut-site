@@ -1,0 +1,119 @@
+name: Управление горячими датами
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Действие — add, edit, disable, book или delete
+        required: true
+        type: choice
+        options: [add, edit, disable, book, delete]
+      id:
+        description: Идентификатор предложения (например tuman-2026-12-04)
+        required: true
+        type: string
+      house:
+        description: Дом для add/edit
+        required: false
+        type: choice
+        options: ['', tuman, luna, les, shalash]
+      date:
+        description: Дата отдыха ГГГГ-ММ-ДД
+        required: false
+        type: string
+      guests:
+        description: Количество гостей
+        required: false
+        type: string
+      terms:
+        description: Условия акции
+        required: false
+        type: string
+      regular_price:
+        description: Обычная цена, ₽
+        required: false
+        type: string
+      sale_price:
+        description: Акционная цена, ₽
+        required: false
+        type: string
+      publish_from:
+        description: Начало публикации ГГГГ-ММ-ДД
+        required: false
+        type: string
+      expires_at:
+        description: Показывать до ГГГГ-ММ-ДД
+        required: false
+        type: string
+      active:
+        description: Статус публикации для add/edit
+        required: false
+        type: choice
+        options: ['', 'true', 'false']
+      booked:
+        description: Статус бронирования для add/edit
+        required: false
+        type: choice
+        options: ['', 'false', 'true']
+      comment:
+        description: Внутренний комментарий
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: manage-hot-dates
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получить сайт
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Проверить и применить изменение
+        env:
+          ACTION: ${{ inputs.action }}
+          OFFER_ID: ${{ inputs.id }}
+          HOUSE: ${{ inputs.house }}
+          STAY_DATE: ${{ inputs.date }}
+          GUESTS: ${{ inputs.guests }}
+          TERMS: ${{ inputs.terms }}
+          REGULAR_PRICE: ${{ inputs.regular_price }}
+          SALE_PRICE: ${{ inputs.sale_price }}
+          PUBLISH_FROM: ${{ inputs.publish_from }}
+          EXPIRES_AT: ${{ inputs.expires_at }}
+          ACTIVE: ${{ inputs.active }}
+          BOOKED: ${{ inputs.booked }}
+          COMMENT: ${{ inputs.comment }}
+        shell: bash
+        run: |
+          args=("$ACTION" --file content.json --id "$OFFER_ID")
+          [[ -n "$HOUSE" ]] && args+=(--house "$HOUSE")
+          [[ -n "$STAY_DATE" ]] && args+=(--date "$STAY_DATE")
+          [[ -n "$GUESTS" ]] && args+=(--guests "$GUESTS")
+          [[ -n "$TERMS" ]] && args+=(--terms "$TERMS")
+          [[ -n "$REGULAR_PRICE" ]] && args+=(--regularPrice "$REGULAR_PRICE")
+          [[ -n "$SALE_PRICE" ]] && args+=(--salePrice "$SALE_PRICE")
+          [[ -n "$PUBLISH_FROM" ]] && args+=(--publishFrom "$PUBLISH_FROM")
+          [[ -n "$EXPIRES_AT" ]] && args+=(--expiresAt "$EXPIRES_AT")
+          [[ -n "$ACTIVE" ]] && args+=(--active "$ACTIVE")
+          [[ -n "$BOOKED" ]] && args+=(--booked "$BOOKED")
+          [[ -n "$COMMENT" ]] && args+=(--comment "$COMMENT")
+          node scripts/update-hot-dates.mjs "${args[@]}"
+      - name: Сохранить опубликованные данные
+        shell: bash
+        run: |
+          if git diff --quiet -- content.json; then
+            echo "Изменений нет"
+            exit 0
+          fi
+          git config user.name "LES SURGUT Actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add content.json
+          git commit -m "Update hot dates: ${{ inputs.action }} ${{ inputs.id }}"
+          git push
