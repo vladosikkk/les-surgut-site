@@ -103,7 +103,9 @@ jobs:
           [[ -n "$EXPIRES_AT" ]] && args+=(--expiresAt "$EXPIRES_AT")
           [[ -n "$ACTIVE" ]] && args+=(--active "$ACTIVE")
           [[ -n "$BOOKED" ]] && args+=(--booked "$BOOKED")
-          [[ -n "$COMMENT" ]] && args+=(--comment "$COMMENT")
+          if [[ "$ACTION" == "add" || "$ACTION" == "edit" ]]; then
+            args+=(--comment "$COMMENT")
+          fi
           node scripts/update-hot-dates.mjs "${args[@]}"
       - name: Сохранить опубликованные данные
         shell: bash
